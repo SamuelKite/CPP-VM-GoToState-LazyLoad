@@ -1,0 +1,8 @@
+namespace GoToStateControlTemplate
+{
+    runtimeclass SimpleViewModel : Windows.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        SimpleViewModel();
+        String State;
+    }
+}

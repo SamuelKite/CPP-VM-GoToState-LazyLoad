@@ -1,0 +1,11 @@
+import "SimpleViewModel.idl";
+
+namespace GoToStateControlTemplate
+{
+    [default_interface]
+    runtimeclass MainPage : Windows.UI.Xaml.Controls.Page
+    {
+        MainPage();
+        SimpleViewModel VM{ get; };
+    }
+}

@@ -4,5 +4,6 @@ namespace GoToStateControlTemplate
     {
         SimpleViewModel();
         String State;
+        String FeedbackState;
     }
 }

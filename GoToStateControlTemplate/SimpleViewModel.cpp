@@ -4,11 +4,15 @@
 #include "SimpleViewModel.g.cpp"
 #endif
 
+using namespace winrt;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Data;
+
 namespace winrt::GoToStateControlTemplate::implementation
 {
     winrt::hstring SimpleViewModel::FeedbackState()
     {
-        return m_state;
+        return m_feedbackState;
     }
 
     void SimpleViewModel::FeedbackState(winrt::hstring const& value)
@@ -16,7 +20,7 @@ namespace winrt::GoToStateControlTemplate::implementation
         if (m_state != value)
         {
             m_feedbackState = value;
-            m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{ L"FeedbackState" });
+            m_propertyChanged(*this, PropertyChangedEventArgs{ L"FeedbackState" });
         }
     }
 
@@ -30,11 +34,11 @@ namespace winrt::GoToStateControlTemplate::implementation
         if (m_state != value)
         {
             m_state = value;
-            m_propertyChanged(*this, Windows::UI::Xaml::Data::PropertyChangedEventArgs{ L"State" });
+            m_propertyChanged(*this, PropertyChangedEventArgs{ L"State" });
         }
     }
 
-    winrt::event_token SimpleViewModel::PropertyChanged(Windows::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+    winrt::event_token SimpleViewModel::PropertyChanged(PropertyChangedEventHandler const& handler)
     {
         return m_propertyChanged.add(handler);
     }

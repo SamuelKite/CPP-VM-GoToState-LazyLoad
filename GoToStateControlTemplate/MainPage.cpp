@@ -5,6 +5,7 @@
 #include "MainPage.xaml.g.h"
 
 using namespace winrt;
+using namespace Windows::Foundation;
 using namespace Windows::UI::Xaml;
 
 namespace winrt::GoToStateControlTemplate::implementation
@@ -17,9 +18,13 @@ namespace winrt::GoToStateControlTemplate::implementation
 		m_simpleVMPropChangedEventToken = m_simpleVM.PropertyChanged({ this, &MainPage::HandlePropertyChanged });
 	}
 
-	void MainPage::Page_Loaded(IInspectable const& sender, RoutedEventArgs const& e)
+	void MainPage::Page_Loaded(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
 	{
-
+		if (m_simpleVM != nullptr)
+		{
+			GoToStateForRecognizedStates(std::wstring(m_simpleVM.FeedbackState()));
+			GoToStateForRecognizedStates(std::wstring(m_simpleVM.State()));
+		}
 	}
 
 	GoToStateControlTemplate::SimpleViewModel MainPage::VM() {
@@ -31,44 +36,60 @@ namespace winrt::GoToStateControlTemplate::implementation
 
 	void MainPage::HandlePropertyChanged(IInspectable const& /* sender */, PropertyChangedEventArgs const& args) {
 
-		if (
-			(args.PropertyName() == L"State" && m_states.find(std::wstring(VM().State())) != m_states.end())
-			||
-			(args.PropertyName() == L"FeedbackState" && m_feedbackStates.find(std::wstring(VM().State())) != m_states.end())
-			)
+		auto wstringPropName = std::wstring(args.PropertyName());
+		GoToStateForRecognizedStates(wstringPropName);
+	}
+
+	void MainPage::GoToStateForRecognizedStates(std::wstring const& propName) {
+		if (propName == L"State" && m_states.find(std::wstring(VM().State())) != m_states.end())
 		{
 			VisualStateManager::GoToState(this->try_as<Controls::Control>(), VM().State(), true);
 		}
-	}
-
-
-	void MainPage::GoToFourItemButton_Click(IInspectable const& sender, RoutedEventArgs const& /*e*/)
-	{
-		GoToStateWithTagVM(sender, L"FourItem");
-	}
-
-	void MainPage::GoToSpecialItemButton_Click(IInspectable const& sender, RoutedEventArgs const& /*e*/)
-	{
-		GoToStateWithTagVM(sender, L"SpecialItem");
-	}
-
-	void MainPage::GoToSingleItemButton_Click(IInspectable const& sender, RoutedEventArgs const& /*e*/)
-	{
-		GoToStateWithTagVM(sender, L"SingleItem");
-	}
-
-	void MainPage::GoToStateWithTagVM(IInspectable const& sender, winrt::hstring const& state)
-	{
-		if (auto muhControl = sender.try_as<Controls::Control>())
+		else if (propName == L"FeedbackState" && m_feedbackStates.find(std::wstring(VM().FeedbackState())) != m_feedbackStates.end())
 		{
-			if (auto muhVM = muhControl.Tag().try_as<GoToStateControlTemplate::SimpleViewModel>())
-			{
-				muhVM.State(state);
-			}
+			VisualStateManager::GoToState(this->try_as<Controls::Control>(), VM().FeedbackState(), true);
+		}
+	}
+
+	void MainPage::GoToFourItemButton_Click(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	{
+		GoToStateWithTagVM(L"FourItem");
+	}
+
+	void MainPage::GoToSpecialItemButton_Click(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	{
+		GoToStateWithTagVM(L"SpecialItem");
+	}
+
+	void MainPage::GoToSingleItemButton_Click(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	{
+		GoToStateWithTagVM(L"SingleItem");
+	}
+
+	void MainPage::GoToStateWithTagVM(winrt::hstring const& state)
+	{
+		if (m_simpleVM != nullptr && m_states.find(std::wstring(state)) != m_states.end())
+		{
+			m_simpleVM.State(state);
+		}
+	}
+
+	void MainPage::FeedbackResponse_Click(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	{
+		GoToFeedbackStateWithTagVM(L"Normal");
+	}
+
+	void MainPage::FeedbackButton_Click(IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	{
+		GoToFeedbackStateWithTagVM(L"GatherFeedback");
+	}
+
+	void MainPage::GoToFeedbackStateWithTagVM(winrt::hstring const& state)
+	{
+		if (m_simpleVM != nullptr && m_feedbackStates.find(std::wstring(state)) != m_feedbackStates.end())
+		{
+			m_simpleVM.FeedbackState(state);
 		}
 	}
 }
-
-
-
 
